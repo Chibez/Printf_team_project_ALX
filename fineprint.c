@@ -1,100 +1,48 @@
 #include <stdio.h>
 #include <stdarg.h>
-#include "main.h"
 
 /**
- * print_character - Print a character to stdout
- * @c: The character to print
- *
- * Return: 1 for the printed character
- */
-static int print_character(int c)
-{
-	putchar(c);
-	return (1);
-}
-
-/**
- * handle_c - Handle the 'c' conversion specifier
- * @args: The va_list of arguments
- *
- * Return: The number of characters printed
- */
-static int handle_c(va_list args)
-{
-	int c = va_arg(args, int);
-
-	return (print_character(c));
-}
-
-/**
- * handle_di - Handle the 'd' and 'i' conversion specifiers
- * @args: The va_list of arguments
- *
- * Return: The number of characters printed
- */
-static int handle_di(va_list args)
-{
-	int n = va_arg(args, int);
-	int char_count = 0;
-	int divisor = 1;
-	int digit;
-
-	while (n / divisor > 9)
-	{
-		divisor *= 10;
-	}
-
-	while (divisor > 0)
-	{
-		digit = n / divisor;
-		print_character('0' + digit);
-		char_count++;
-		n %= divisor;
-		divisor /= 10;
-	}
-	return (char_count);
-}
-
-/**
- * my_printf - Custom printf function
+ * custom_printf - Custom printf function to handle base conversions
  * @format: The format string
+ * @...: Variable number of arguments
  *
  * Return: The number of characters printed (excluding the null byte)
  */
-int my_printf(const char *format, ...)
-{
-	va_list args;
+int custom_printf(const char *format, ...) {
+    
 	int char_count;
-
+	va_list args;
+	
 	va_start(args, format);
 	char_count = 0;
 
-	while (*format)
-	{
-		if (*format != '%')
-		{
-			char_count += print_character(*format);
-		} else
-		{
-			format++;
-			if (*format == 'c')
-			{
-				char_count += handle_c(args);
-			} else if (*format == 'd' || *format == 'i')
-			{
-				char_count += handle_di(args);
-			} else if (*format == '%')
-			{
-				char_count += print_character('%');
-			} else
-			{
-				char_count += print_character('%');
-				char_count += print_character(*format);
-			}
-		}
-		format++;
-	}
-	va_end(args);
-	return (char_count);
+    while (*format) {
+        if (*format != '%') {
+            putchar(*format);
+            char_count++;
+        } else {
+            format++;
+            if (*format == 'd' || *format == 'i') {
+                int num = va_arg(args, int);
+                char_count += printf("%d", num);
+            } else if (*format == 'x') {
+                unsigned int num = va_arg(args, unsigned int);
+                char_count += printf("%x", num);
+            } else if (*format == 's') {
+                char *str = va_arg(args, char *);
+                char_count += printf("%s", str);
+            } else if (*format == 'c') {
+                int c = va_arg(args, int);
+                putchar(c);
+                char_count++;
+            } else if (*format == '%') {
+                putchar('%');
+                char_count++;
+            }
+        }
+        format++;
+    }
+
+    va_end(args);
+    return char_count;
 }
