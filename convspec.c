@@ -22,9 +22,9 @@ static int print_character(int c)
  */
 static int print_string(const char *str)
 {
-	int cahr_count;
+	int char_count;
 
-	int char_count = 0;
+	char_count = 0;
 
 	while (*str)
 	{
@@ -67,7 +67,7 @@ static int handle_s(va_list args)
  *
  * Return: The number of characters printed (excluding the null byte)
  */
-int my_printf(const char *format, ...)
+int _printf(const char *format, ...)
 {
 	va_list args;
 	int char_count;
